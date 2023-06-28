@@ -30,6 +30,7 @@ Currently, just place a file called test.bin containing a raw disc image (with <
 
 ## To Do
 
+- Add a display for how many *total* errors there are in an image.
 - Make this a lot more usable.
 - Maybe put all the business code in a place that's not the "MainWindow" class.
 - Better interface.
