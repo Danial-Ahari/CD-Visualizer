@@ -30,6 +30,7 @@ Place your file in the same directory (or know where it is relative to the direc
 
 ## To Do
 
+- Add a display for how many *total* errors there are in an image.
 - Make this a lot more usable.
 - Maybe put all the business code in a place that's not the "MainWindow" class.
 - Better interface.
