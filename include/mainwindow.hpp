@@ -5,6 +5,8 @@
 #include <gtkmm/label.h>
 #include <gtkmm/grid.h>
 #include <gtkmm/window.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/textview.h>
 #include <string.h>
 
 class MainWindow : public Gtk::Window
@@ -20,6 +22,7 @@ public:
   int targetLocationLevel3;
   int targetLocationLevel4;
   int targetLocationLevel5;
+  FILE *image;
 
 protected:
   //Signal handlers:
@@ -34,10 +37,12 @@ protected:
   void on_8_button_clicked();
   void on_9_button_clicked();
   void on_sector_clicked(int button);
+  void reset_vis();
 
   //Member widgets:
   Gtk::Grid main_grid;
   Gtk::Label instruction_label;
+  Gtk::Label error_label;
   Gtk::Button sector_button_0;
   Gtk::Button sector_button_1;
   Gtk::Button sector_button_2;
@@ -48,12 +53,19 @@ protected:
   Gtk::Button sector_button_7;
   Gtk::Button sector_button_8;
   Gtk::Button sector_button_9;
+  Gtk::Button reset_button;
+  Gtk::Button open_file_button;
+  Gtk::TextView file_path_view;
+  Gtk::Label hex_viewer;
+  Gtk::ScrolledWindow scroller;
   // Generally helpful functions:
   void updateLevel();
   void createSectorArray(FILE* image);
   std::string testSectors(int first, int last);
   std::string makeString(int first, int last);
   void renderBlocks(int level);
+  std::string getHex(int sector);
+  void open_file();
 };
 
 #endif // GTKMM_MAINWINDOW_H
