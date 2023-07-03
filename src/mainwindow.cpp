@@ -7,6 +7,8 @@ int8_t ecmify(uint8_t* insector);
 void eccedc_init(void);
 bool sectorArray[330000];
 bool threeSector;
+int green[550][600];
+int red[550][600];
 
 MainWindow::MainWindow()
 : instruction_label("Below is a block diagram. Each block represents up to 33000 sectors.")
@@ -14,7 +16,7 @@ MainWindow::MainWindow()
 	set_border_width(10);
 	add(main_grid);
 	main_grid.attach(instruction_label,0,1,5);
-	main_grid.attach(error_label,5,1,4);
+	main_grid.attach(info_label,5,1,4);
 	main_grid.attach(reset_button,9,1,1);
 	reset_button.set_label("Reset");
 	reset_button.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::reset_vis));
@@ -28,8 +30,10 @@ MainWindow::MainWindow()
 	main_grid.attach(sector_button_7,7,2,1);
 	main_grid.attach(sector_button_8,8,2,1);
 	main_grid.attach(sector_button_9,9,2,1);
-	main_grid.attach(scroller,0,3,2);
+	main_grid.attach(scroller,0,3,3);
+	main_grid.attach(imageObject,3,3,7);
 	scroller.set_size_request(200,500);
+	imageObject.set_size_request(550,600);
 	scroller.show();
 	scroller.add(hex_viewer);
 	
@@ -66,14 +70,16 @@ MainWindow::MainWindow()
 	sector_button_8.set_size_request(100,100);
 	sector_button_9.set_size_request(100,100);
 	instruction_label.show();
-	error_label.show();
+	info_label.show();
 	reset_button.show();
 	main_grid.show();
 }
 
 MainWindow::~MainWindow()
-{
-	fclose(image);
+{	
+	if(image) {
+		fclose(image);
+	}
 }
 
 void MainWindow::on_0_button_clicked() {
@@ -165,19 +171,26 @@ void MainWindow::createSectorArray(FILE* image) {
 	numOfSectors = ftell(image)/2352;
 	fseek(image, 0, SEEK_SET);
 	eccedc_init();
+	memset(green, 0, sizeof(green));
+	memset(red, 0, sizeof(red));
 	for(int i = 0; i < numOfSectors; i++) {
 		uint8_t * Buf = (uint8_t*)malloc(sizeof(uint8_t)*2352);
 		fread(Buf, 1, 2352, image);
 		int resultEC = ecmify(Buf);
 		if(resultEC == 0) {
 			sectorArray[i] = false;
+			green[i/600][i%600] = 255;
+			red[i/600][i%600] = 0;
 		} else {
 			sectorArray[i] = true;
 			numErrors++;
+			green[i/600][i%600] = 0;
+			red[i/600][i%600] = 255;
 		}
 		free(Buf);
 	}
-	error_label.set_text("Total errors on disc: " + std::to_string(numErrors));
+	genImage();
+	info_label.set_text("Total errors on disc: " + std::to_string(numErrors) + "\nTotal sectors on disc: " + std::to_string(numOfSectors) + "\nError rate: %" + std::to_string(((float)numErrors/(float)numOfSectors)*100));
 }
 
 std::string MainWindow::testSectors(int first, int last) {
@@ -232,7 +245,7 @@ void MainWindow::renderBlocks(int level) {
 			break;
 		case 5:
 			loc = loc1 + loc2 + loc3 + loc4 + loc5 + 1;
-			diff = NULL;
+			// diff unused
 			break;
 		default:
 			loc = 0;
@@ -367,6 +380,7 @@ void MainWindow::renderBlocks(int level) {
 			sector_button_7.hide();
 			sector_button_8.hide();
 			sector_button_9.hide();
+			threeSector = false;
 		}
 	}
 	if(level == 4) {
@@ -388,6 +402,7 @@ void MainWindow::reset_vis() {
 	targetLocationLevel4 = 0;
 	targetLocationLevel5 = 0;
 	updateLevel();
+	hex_viewer.set_text("");
 }
 
 std::string MainWindow::getHex(int sector) {
@@ -407,10 +422,74 @@ std::string MainWindow::getHex(int sector) {
 void MainWindow::open_file() {
 	Gtk::TextBuffer::iterator start, end;
 	auto buffer = file_path_view.get_buffer();
-	const char *text;
+	std::string text;
 	buffer->get_bounds(start, end);
-	text = (char*)(buffer->get_text(start, end, FALSE)).c_str();
-	image = fopen(text, "rb+");
-	createSectorArray(image);
-	updateLevel();
+	text = (buffer->get_text(start, end, FALSE));
+	image = fopen(text.c_str(), "rb+");
+	if (image) {
+		createSectorArray(image);
+		updateLevel();
+	}
+	// free(text);
+}
+
+void MainWindow::genImage() {
+	// The code below is modified slightly from the code here: https://stackoverflow.com/questions/2654480/writing-bmp-image-in-pure-c-c-without-other-libraries
+	FILE *f;
+	unsigned char *img = NULL;
+	int r,g,b,x,y,w,h;
+	w = 550;
+	h = 600;
+	int filesize = 54 + 3*w*h;  //w is your image width, h is image height, both int
+
+	img = (unsigned char *)malloc(3*w*h);
+	memset(img,0,3*w*h);
+
+	for(int i=0; i<w; i++)
+	{
+	    for(int j=0; j<h; j++)
+	    {
+		x=i; y=(h-1)-j;
+		r = red[i][j]*255;
+		g = green[i][j]*255;
+		b = 0*255;
+		if (r > 255) r=255;
+		if (g > 255) g=255;
+		img[(x+y*w)*3+2] = (unsigned char)(r);
+		img[(x+y*w)*3+1] = (unsigned char)(g);
+		img[(x+y*w)*3+0] = (unsigned char)(b);
+	    }
+	}
+
+	unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0};
+	unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0};
+	unsigned char bmppad[3] = {0,0,0};
+
+	bmpfileheader[ 2] = (unsigned char)(filesize    );
+	bmpfileheader[ 3] = (unsigned char)(filesize>> 8);
+	bmpfileheader[ 4] = (unsigned char)(filesize>>16);
+	bmpfileheader[ 5] = (unsigned char)(filesize>>24);
+
+	bmpinfoheader[ 4] = (unsigned char)(       w    );
+	bmpinfoheader[ 5] = (unsigned char)(       w>> 8);
+	bmpinfoheader[ 6] = (unsigned char)(       w>>16);
+	bmpinfoheader[ 7] = (unsigned char)(       w>>24);
+	bmpinfoheader[ 8] = (unsigned char)(       h    );
+	bmpinfoheader[ 9] = (unsigned char)(       h>> 8);
+	bmpinfoheader[10] = (unsigned char)(       h>>16);
+	bmpinfoheader[11] = (unsigned char)(       h>>24);
+
+	f = fopen("image.bmp","wb");
+	fwrite(bmpfileheader,1,14,f);
+	fwrite(bmpinfoheader,1,40,f);
+	for(int i=0; i<h; i++)
+	{
+	    fwrite(img+(w*(h-i-1)*3),3,w,f);
+	    fwrite(bmppad,1,(4-(w*3)%4)%4,f);
+	}
+
+	free(img);
+	fclose(f);
+	imageObject.set("image.bmp");
+	imageObject.show();
 }

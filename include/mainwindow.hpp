@@ -8,6 +8,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/textview.h>
 #include <string.h>
+#include <gtkmm/image.h>
 
 class MainWindow : public Gtk::Window
 {
@@ -42,7 +43,7 @@ protected:
   //Member widgets:
   Gtk::Grid main_grid;
   Gtk::Label instruction_label;
-  Gtk::Label error_label;
+  Gtk::Label info_label;
   Gtk::Button sector_button_0;
   Gtk::Button sector_button_1;
   Gtk::Button sector_button_2;
@@ -58,6 +59,7 @@ protected:
   Gtk::TextView file_path_view;
   Gtk::Label hex_viewer;
   Gtk::ScrolledWindow scroller;
+  Gtk::Image imageObject;
   // Generally helpful functions:
   void updateLevel();
   void createSectorArray(FILE* image);
@@ -66,6 +68,7 @@ protected:
   void renderBlocks(int level);
   std::string getHex(int sector);
   void open_file();
+  void genImage();
 };
 
 #endif // GTKMM_MAINWINDOW_H

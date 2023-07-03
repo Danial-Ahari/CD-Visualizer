@@ -26,21 +26,17 @@ Note: Requires libgtkmm (version 3.0 used for testing).
 
 ## Usage
 
-Place your file in the same directory (or know where it is relative to the directory), run cdvisualizer, type the file name in the top left, and click "Open".
+Run cdvisualizer, type the file name (full absolute path) in the top left, and click "Open".
 
 ## To Do
 
-- Add a display for how many *total* errors there are in an image.
-- Make this a lot more usable.
+- ~~Add a display for how many *total* errors there are in an image.~~
+- ~~Make this a lot more usable.~~
 - Maybe put all the business code in a place that's not the "MainWindow" class.
-- Better interface.
-- ~~Sector view in hex.~~
-- ~~Make it so that the first sector in 10 sector view actually represents one sector.~~
-- ~~Make it so only the three sectors represented in 33 sector view come through to 10 sector view.~~
+- ~~Better interface.~~
 - Maybe consider using better numbers.
 - Make this compatible with larger images.
-- In tandem with better interface, PNG exporting.
-- ~~Reset button.~~
+- ~~In tandem with better interface, PNG (nope, BMP) exporting.~~
 
 ## Changelog
 
