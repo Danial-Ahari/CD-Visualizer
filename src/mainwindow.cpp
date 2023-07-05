@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fcntl.h>
 #include <iomanip>
+#include <ctime>
+#include <pwd.h>
 
 int8_t ecmify(uint8_t* insector);
 void eccedc_init(void);
@@ -11,8 +13,9 @@ int green[550][600];
 int red[550][600];
 
 MainWindow::MainWindow()
-: instruction_label("Below is a block diagram. Each block represents up to 33000 sectors.")
+: file_path_label("BIN file path:"), message("a")
 {
+	set_default_size(1280,720);
 	set_border_width(10);
 	add(main_grid);
 	main_grid.attach(instruction_label,0,1,5);
@@ -31,18 +34,24 @@ MainWindow::MainWindow()
 	main_grid.attach(sector_button_8,8,2,1);
 	main_grid.attach(sector_button_9,9,2,1);
 	main_grid.attach(scroller,0,3,3);
-	main_grid.attach(imageObject,3,3,7);
+	main_grid.attach(imageObjectEvent,3,3,7);
+	imageObjectEvent.add(imageObject);
+	imageObjectEvent.show();
+	
 	scroller.set_size_request(200,500);
 	imageObject.set_size_request(550,600);
 	scroller.show();
 	scroller.add(hex_viewer);
+	hex_viewer.set_selectable(TRUE);
 	
 	auto context = hex_viewer.get_pango_context(); 
 	auto font = context->get_font_description();
 	font.set_family("Monospace");
 	context->set_font_description(font);
 	
-	main_grid.attach(file_path_view,0,0,9);
+	main_grid.attach(file_path_label,0,0,1);
+	file_path_label.show();
+	main_grid.attach(file_path_view,1,0,8);
 	main_grid.attach(open_file_button,9,0,1);
 	file_path_view.show();
 	open_file_button.show();
@@ -59,16 +68,8 @@ MainWindow::MainWindow()
 	sector_button_7.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_7_button_clicked));
 	sector_button_8.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_8_button_clicked));
 	sector_button_9.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_9_button_clicked));
-	sector_button_0.set_size_request(100,100);
-	sector_button_1.set_size_request(100,100);
-	sector_button_2.set_size_request(100,100);
-	sector_button_3.set_size_request(100,100);
-	sector_button_4.set_size_request(100,100);
-	sector_button_5.set_size_request(100,100);
-	sector_button_6.set_size_request(100,100);
-	sector_button_7.set_size_request(100,100);
-	sector_button_8.set_size_request(100,100);
-	sector_button_9.set_size_request(100,100);
+
+	imageObjectEvent.signal_button_press_event().connect(sigc::mem_fun(*this, &MainWindow::exportImage));
 	instruction_label.show();
 	info_label.show();
 	reset_button.show();
@@ -79,6 +80,7 @@ MainWindow::~MainWindow()
 {	
 	if(image) {
 		fclose(image);
+		std::remove("image.bmp");
 	}
 }
 
@@ -116,20 +118,21 @@ void MainWindow::on_9_button_clicked() {
 void MainWindow::on_sector_clicked(int button) {
 	levelsOfView++;
 	if(levelsOfView == 1) {
-
 		targetLocationLevel1 = button;
+		updateLevel();
 	} else if(levelsOfView == 2) {
-
 		targetLocationLevel2 = button;
+		updateLevel();
 	} else if(levelsOfView == 3) {
-
 		targetLocationLevel3 = button;
+		updateLevel();
 	} else if(levelsOfView == 4) {
-
 		targetLocationLevel4 = button;
+		updateLevel();
 	} else if(levelsOfView == 5) {
 		if(button == 3) { threeSector = true;}
 		targetLocationLevel5 = button;
+		updateLevel();
 	} else if(levelsOfView == 6) {
 		hex_viewer.set_text(getHex(33000*targetLocationLevel1 +
 			3300*targetLocationLevel2 +
@@ -140,7 +143,6 @@ void MainWindow::on_sector_clicked(int button) {
 		hex_viewer.show();
 		levelsOfView = 5;
 	}
-	updateLevel();
 }
 
 void MainWindow::updateLevel() {
@@ -409,10 +411,12 @@ std::string MainWindow::getHex(int sector) {
 	uint8_t * Buf = (uint8_t*)malloc(sizeof(uint8_t)*2352);
 	fseek(image, sector*2352, SEEK_SET);
 	fread(Buf, 1, 2352, image);
-	std::string returnString;
+	std::stringstream stream;
+	stream << std::hex << (int)Buf[12] << ":" << std::hex << (int)Buf[13]  << ":" << std::hex << (int)Buf[14] << "\n\n";
+	std::string returnString = stream.str();
 	for(int i = 0; i < 2352; i=i+8) {
 		std::stringstream stream;
-		stream << std::hex << i << " " << std::hex << (int)Buf[i] << std::hex << (int)Buf[i+1] << " " << std::hex << (int)Buf[i+2] << std::hex << (int)Buf[i+3] << " " << std::hex << (int)Buf[i+4] << std::hex << (int)Buf[i+5] << " " << std::hex << (int)Buf[i+6] << std::hex << (int)Buf[i+7] << '\n';
+		stream << std::hex << i << '\t' << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i] << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i+1] << " " << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i+2] << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i+3] << " " << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i+4] << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i+5] << " " << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i+6] << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[i+7] << '\n';
 		returnString = returnString + stream.str();
 	}
 	free(Buf);
@@ -420,17 +424,12 @@ std::string MainWindow::getHex(int sector) {
 }
 
 void MainWindow::open_file() {
-	Gtk::TextBuffer::iterator start, end;
-	auto buffer = file_path_view.get_buffer();
-	std::string text;
-	buffer->get_bounds(start, end);
-	text = (buffer->get_text(start, end, FALSE));
+	std::string text = file_path_view.get_text();
 	image = fopen(text.c_str(), "rb+");
 	if (image) {
 		createSectorArray(image);
 		updateLevel();
 	}
-	// free(text);
 }
 
 void MainWindow::genImage() {
@@ -492,4 +491,35 @@ void MainWindow::genImage() {
 	fclose(f);
 	imageObject.set("image.bmp");
 	imageObject.show();
+}
+
+bool MainWindow::exportImage(GdkEventButton* event) {
+	const char *homedir;
+
+	if ((homedir = getenv("HOME")) == NULL) {
+	    homedir = getpwuid(getuid())->pw_dir;
+	}
+	
+	FILE *tempFile;
+	FILE *outputFile;
+
+	tempFile = fopen("image.bmp","rb");
+	time_t now = time(0);
+	char* dt = ctime(&now);
+	std::string dtstring(dt);
+	std::string homedirstring(homedir);
+	std::string outputName = homedirstring + "/Documents/CD Visualized ";
+	outputFile = fopen((outputName + dtstring + ".bmp").c_str(), "wb");
+	
+	unsigned char Buf[3918]; // This number was picked arbitrarily to split the known 991,254 bytes into a more manageable size.
+	for(int i = 0; i<253; i++) {
+		fread(Buf, 1, 3918, tempFile);
+		fwrite(Buf, 1, 3918, outputFile);
+	}
+	message.set_message("Wrote image to \"~/Documents/CD Visualized " + dtstring + ".bmp\"");
+	message.run();
+	message.hide();
+	fclose(tempFile);
+	fclose(outputFile);
+	return true;
 }
