@@ -1,10 +1,10 @@
 # CD-Visualizer
 A visualization program for CD .BIN files that shows errors (detected via Natalia Portillo's EDC/ECC Checker).
+This visualizer is being completed as part of a project for an RCEU in 2023 regarding CD-ROM's and Data Recovery.
 
 ## Acknowledgements
 
 - EDC/ECC Checker - https://github.com/claunia/edccchk (License in source file)  
-- This visualizer is being completed as part of a project for an RCEU in 2023 regarding CD-ROM's and Data Recovery. The main project can be found at: https://github.com/Danial-Ahari/RCEU-2023
 
 ## Description
 
