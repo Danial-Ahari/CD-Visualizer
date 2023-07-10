@@ -34,9 +34,7 @@ Run cdvisualizer, type the file name (full absolute path) in the top left, and c
 
 ## To Do
 
-- ~~Maybe put all the business code in a place that's not the "MainWindow" class.~~ Not sure if I actually want to do this, nor what coding practice says I should do.
-- ~~Maybe consider using better numbers.~~ The numbers chosen are working fine and divide evenly.
-- Make this compatible with larger images. (This could be done, but does it make sense to do so? EDCCHK only does CD images.)
+- ~~Make this compatible with larger images.~~
 
 ## Changelog
 

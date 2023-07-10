@@ -13,3 +13,7 @@ Better interface, more usable, total number of errors, sectors, and error rate, 
 ### July 5th - 15:00
 
 Better interface again, more usable again, now can export images. Updated README as well with mention of requirements for the GTK interface.
+
+### July 10th - 14:00
+
+It can read full-size disc images now. I misunderstood and thought CDs were 330k sectors, not 333k. 

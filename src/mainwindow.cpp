@@ -7,10 +7,10 @@
 
 int8_t ecmify(uint8_t* insector);
 void eccedc_init(void);
-bool sectorArray[330000];
-bool threeSector;
-int green[550][600];
-int red[550][600];
+bool sectorArray[333000];
+bool sevenSector;
+int green[555][600];
+int red[555][600];
 
 MainWindow::MainWindow()
 : file_path_label("BIN file path:"), message("a")
@@ -39,7 +39,7 @@ MainWindow::MainWindow()
 	imageObjectEvent.show();
 	
 	scroller.set_size_request(200,500);
-	imageObject.set_size_request(550,600);
+	imageObject.set_size_request(555,600);
 	scroller.show();
 	scroller.add(hex_viewer);
 	hex_viewer.set_selectable(TRUE);
@@ -130,7 +130,7 @@ void MainWindow::on_sector_clicked(int button) {
 		targetLocationLevel4 = button;
 		updateLevel();
 	} else if(levelsOfView == 5) {
-		if(button == 3) { threeSector = true;}
+		if(button == 3) { sevenSector = true;}
 		targetLocationLevel5 = button;
 		updateLevel();
 	} else if(levelsOfView == 6) {
@@ -147,19 +147,19 @@ void MainWindow::on_sector_clicked(int button) {
 
 void MainWindow::updateLevel() {
 	if(levelsOfView == 0) {
-		instruction_label.set_text("Below is a block diagram. Each block represents up to 33000 sectors.");
+		instruction_label.set_text("Below is a block diagram. Each block represents up to 33300 sectors.");
 		renderBlocks(0);
 	} else if(levelsOfView == 1) {
-		instruction_label.set_text("Below is a block diagram. Each block represents up to 3300 sectors.");
+		instruction_label.set_text("Below is a block diagram. Each block represents up to 3330 sectors.");
 		renderBlocks(1);
 	}  else if(levelsOfView == 2) {
-		instruction_label.set_text("Below is a block diagram. Each block represents up to 330 sectors.");
+		instruction_label.set_text("Below is a block diagram. Each block represents up to 333 sectors.");
 		renderBlocks(2);
 	} else if(levelsOfView == 3) {
-		instruction_label.set_text("Below is a block diagram. Each block represents up to 33 sectors.");
+		instruction_label.set_text("Below is a block diagram. Each block represents up to 37 sectors.");
 		renderBlocks(3);
 	} else if(levelsOfView == 4) {
-		instruction_label.set_text("Below is a block diagram. Each block represents up to 10 sectors, except for the last which always represents 3.");
+		instruction_label.set_text("Below is a block diagram. Each block represents up to 10 sectors, except for the last which always represents 7.");
 		renderBlocks(4);
 	} else if(levelsOfView == 5) {
 		instruction_label.set_text("Below is a block diagram. Each block represents a sector.");
@@ -219,10 +219,10 @@ std::string MainWindow::makeString(int first, int last) {
 }
 
 void MainWindow::renderBlocks(int level) {
-	int loc1 = 33000*targetLocationLevel1;
-	int loc2 = 3300*targetLocationLevel2;
-	int loc3 = 330*targetLocationLevel3;
-	int loc4 = 33*targetLocationLevel4;
+	int loc1 = 33300*targetLocationLevel1;
+	int loc2 = 3330*targetLocationLevel2;
+	int loc3 = 333*targetLocationLevel3;
+	int loc4 = 37*targetLocationLevel4;
 	int loc5 = 10*targetLocationLevel5;
 	int loc;
 	int diff;
@@ -231,15 +231,15 @@ void MainWindow::renderBlocks(int level) {
 	switch(level) {
 		case 1:
 			loc = loc1;
-			diff = 3300;
+			diff = 3330;
 			break;
 		case 2:
 			loc = loc1 + loc2;
-			diff = 330;
+			diff = 333;
 			break;
 		case 3:
 			loc = loc1 + loc2 + loc3;
-			diff = 33;
+			diff = 37;
 			break;
 		case 4:
 			loc = loc1 + loc2 + loc3 + loc4;
@@ -251,7 +251,7 @@ void MainWindow::renderBlocks(int level) {
 			break;
 		default:
 			loc = 0;
-			diff = 33000;
+			diff = 33300;
 			break;
 	}
 	
@@ -330,32 +330,32 @@ void MainWindow::renderBlocks(int level) {
 			sector_button_2.show();
 		} else {
 			sector_button_2.hide();
+		} 
+		if(numOfSectors >= loc+3) {
+			sector_button_3.set_label(testSectors(loc+3, loc+3) + makeString(loc+3, loc+3));
+			sector_button_3.show();
+		} else {
+			sector_button_3.hide();
 		}
-		if(!threeSector) {
-			if(numOfSectors >= loc+3) {
-				sector_button_3.set_label(testSectors(loc+3, loc+3) + makeString(loc+3, loc+3));
-				sector_button_3.show();
-			} else {
-				sector_button_3.hide();
-			}
-			if(numOfSectors >= loc+4) {
-				sector_button_4.set_label(testSectors(loc+4, loc+4) + makeString(loc+4, loc+4));
-				sector_button_4.show();
-			} else {
-				sector_button_4.hide();
-			}
-			if(numOfSectors >= loc+5) {
-				sector_button_5.set_label(testSectors(loc+5, loc+5) + makeString(loc+5, loc+5));
-				sector_button_5.show();
-			} else {
-				sector_button_5.hide();
-			}
-			if(numOfSectors >= loc+6) {
-				sector_button_6.set_label(testSectors(loc+6, loc+6) + makeString(loc+6, loc+6));
-				sector_button_6.show();
-			} else {
-				sector_button_6.hide();
-			}
+		if(numOfSectors >= loc+4) {
+			sector_button_4.set_label(testSectors(loc+4, loc+4) + makeString(loc+4, loc+4));
+			sector_button_4.show();
+		} else {
+			sector_button_4.hide();
+		}
+		if(numOfSectors >= loc+5) {
+			sector_button_5.set_label(testSectors(loc+5, loc+5) + makeString(loc+5, loc+5));
+			sector_button_5.show();
+		} else {
+			sector_button_5.hide();
+		}
+		if(numOfSectors >= loc+6) {
+			sector_button_6.set_label(testSectors(loc+6, loc+6) + makeString(loc+6, loc+6));
+			sector_button_6.show();
+		} else {
+			sector_button_6.hide();
+		}
+		if(!sevenSector) {
 			if(numOfSectors >= loc+7) {
 				sector_button_7.set_label(testSectors(loc+7, loc+7) + makeString(loc+7, loc+7));
 				sector_button_7.show();
@@ -375,18 +375,14 @@ void MainWindow::renderBlocks(int level) {
 				sector_button_9.hide();
 			}
 		} else {
-			sector_button_3.hide();
-			sector_button_4.hide();
-			sector_button_5.hide();
-			sector_button_6.hide();
 			sector_button_7.hide();
 			sector_button_8.hide();
 			sector_button_9.hide();
-			threeSector = false;
+			sevenSector = false;
 		}
 	}
 	if(level == 4) {
-		sector_button_3.set_label(testSectors(loc+(3*diff)+1, loc+(3*diff)+3) + makeString(loc+(3*diff)+1, loc+(3*diff)+3));
+		sector_button_3.set_label(testSectors(loc+(3*diff)+1, loc+(3*diff)+7) + makeString(loc+(3*diff)+1, loc+(3*diff)+7));
 		sector_button_4.hide();
 		sector_button_5.hide();
 		sector_button_6.hide();
@@ -412,7 +408,7 @@ std::string MainWindow::getHex(int sector) {
 	fseek(image, sector*2352, SEEK_SET);
 	fread(Buf, 1, 2352, image);
 	std::stringstream stream;
-	stream << std::hex << (int)Buf[12] << ":" << std::hex << (int)Buf[13]  << ":" << std::hex << (int)Buf[14] << "\n\n";
+	stream << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[12] << ":" << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[13]  << ":" << std::setw(2) << std::setfill('0') << std::hex << (int)Buf[14] << "\n\n";
 	std::string returnString = stream.str();
 	for(int i = 0; i < 2352; i=i+8) {
 		std::stringstream stream;
@@ -437,7 +433,7 @@ void MainWindow::genImage() {
 	FILE *f;
 	unsigned char *img = NULL;
 	int r,g,b,x,y,w,h;
-	w = 550;
+	w = 555;
 	h = 600;
 	int filesize = 54 + 3*w*h;  //w is your image width, h is image height, both int
 
