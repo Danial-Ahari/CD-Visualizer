@@ -17,3 +17,7 @@ Better interface again, more usable again, now can export images. Updated README
 ### July 10th - 14:00
 
 It can read full-size disc images now. I misunderstood and thought CDs were 330k sectors, not 333k. 
+
+### July 12th - 11:43
+
+Fixed an issue that was causing it to improperly handle getting the hex data of a sector. It can now properly read 333k sector images.

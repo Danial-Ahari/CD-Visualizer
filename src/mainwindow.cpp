@@ -12,6 +12,7 @@ bool sevenSector;
 int green[555][600];
 int red[555][600];
 
+
 MainWindow::MainWindow()
 : file_path_label("BIN file path:"), message("a")
 {
@@ -134,10 +135,10 @@ void MainWindow::on_sector_clicked(int button) {
 		targetLocationLevel5 = button;
 		updateLevel();
 	} else if(levelsOfView == 6) {
-		hex_viewer.set_text(getHex(33000*targetLocationLevel1 +
-			3300*targetLocationLevel2 +
-			330*targetLocationLevel3 +
-			33*targetLocationLevel4 +
+		hex_viewer.set_text(getHex(33300*targetLocationLevel1 +
+			3330*targetLocationLevel2 +
+			333*targetLocationLevel3 +
+			37*targetLocationLevel4 +
 			10*targetLocationLevel5 +
 			1 + button));
 		hex_viewer.show();
@@ -388,6 +389,9 @@ void MainWindow::renderBlocks(int level) {
 		sector_button_6.hide();
 		sector_button_7.hide();
 		sector_button_8.hide();
+		sector_button_9.hide();
+	}
+	if(level == 3) {
 		sector_button_9.hide();
 	}
 }
