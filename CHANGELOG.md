@@ -21,3 +21,11 @@ It can read full-size disc images now. I misunderstood and thought CDs were 330k
 ### July 12th - 11:43
 
 Fixed an issue that was causing it to improperly handle getting the hex data of a sector. It can now properly read 333k sector images.
+
+### July 25th 10:00
+
+Added better licensing information.
+
+### August 1st 10:15
+
+Attempted to make it able to visualize disc images with standards-breaking numbers of sectors, but failed to complete that and just reverted changes, noting it as a known issue in README.

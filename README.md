@@ -6,6 +6,13 @@ This visualizer is being completed as part of a project for an RCEU in 2023 rega
 
 - EDC/ECC Checker - https://github.com/claunia/edccchk (License in source file)  
 
+## Licensing
+
+- Natalia Portillo's EDC/ECC Checker's license is included in the file edcchk.cpp (under /src/)
+	- The license requires a declaration of changes made. Out of the original project, only the one file was included. The main function entry point has been commented out. Only the business code is being utilized. No alterations to that code have been made.
+	
+- This program is released under the GPL v3 license as required and wished for by the copyright holders.
+
 ## Description
 
 This is essentially a visual front-end and file-loader for Natalia Portillo's EDC/ECC Checker. It reads a raw CD image file, breaks it into sectors, checks each sector using the EDC/ECC checker, then visualizes it using a block diagram made in GTK.
@@ -32,9 +39,9 @@ Note: Requires libgtkmm (version 3.0 used for testing).
 
 Run cdvisualizer, type the file name (full absolute path) in the top left, and click "Open".
 
-## To Do
+## Known Issues
 
-- ~~Make this compatible with larger images.~~
+- It can't visualize images larger than 333k sectors. I have found some CDs that break this limit for some reason. Fixing this would require deviating from round numbers and adjusting the code accordingly. It is not especially useful for the use case I intend it for. I might fix it eventually, but it's not on my to-do list.
 
 ## Changelog
 

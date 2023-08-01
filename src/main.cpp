@@ -1,3 +1,20 @@
+// CD Image Visualizer
+// Danial Ahari, mentored by Dr. Jacob Hauenstein
+// The University of Alabama in Huntsville
+// Summer 2023
+//*************************************************************
+// This project is part of a Summer 2023 RCEU conducted at the
+// University of Alabama in Huntsville
+//
+// The code contained in edcchk.cpp is based on Natalia
+// Portillo's code that can be found at 
+// https://github.com/claunia/edccchk
+// The licensing information is contained within that file.
+//
+// Many thanks are given to the people that contributed to
+// projects used here. Without you, none of this would have
+// been possible.
+
 #include "../include/mainwindow.hpp"
 #include <gtkmm/application.h>
 
